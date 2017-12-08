@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-    Copyright (C) 2016 Senparc
+    Copyright (C) 2017 Senparc
 
     文件名：JsApiTicketContainer.cs
     文件功能描述：通用接口JsApiTicket容器，用于自动管理JsApiTicket，如果过期会重新获取
@@ -33,6 +33,9 @@
     
     修改标识：Senparc - 20160813
     修改描述：v4.1.8 修改命名空间为Senparc.Weixin.QY.Containers
+
+    修改标识：Senparc - 20161003
+    修改描述：v4.1.11 修复GetTicketResult()方法中的CheckRegistered()参数错误（少了appSecret）
 ----------------------------------------------------------------*/
 
 using System;
@@ -166,7 +169,7 @@ namespace Senparc.Weixin.QY.Containers
         /// <returns></returns>
         public static JsApiTicketResult GetTicketResult(string appId,string appSecret, bool getNewTicket = false)
         {
-            if (!CheckRegistered(appId))
+            if (!CheckRegistered(BuildingKey(appId, appSecret)))
             {
                 throw new WeixinQyException(UN_REGISTER_ALERT);
             }
@@ -197,6 +200,7 @@ namespace Senparc.Weixin.QY.Containers
 
         #endregion
 
+#if !NET35 && !NET40
         #region 异步方法
         /// <summary>
         /// 【异步方法】使用完整的应用凭证获取Ticket，如果不存在将自动注册
@@ -254,5 +258,6 @@ namespace Senparc.Weixin.QY.Containers
             return jsApiTicketBag.JsApiTicketResult;
         }
         #endregion
+#endif
     }
 }
